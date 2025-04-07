@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    restart: always
+    command: mongod --bind_ip_all --quiet
+    environment:
+      - MONGO_INITDB_DATABASE=notlar
+      - MONGODB_LOG_LEVEL=warning
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/notlar
+      - NODE_ENV=development
+      - MONGODB_DB_NAME=notlar
+      - PORT=5000
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    command: ["npm", "start"]
+    restart: always
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000/api/notes
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    restart: always
+
+volumes:
+  mongodb_data:

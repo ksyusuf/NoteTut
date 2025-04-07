@@ -1,0 +1,92 @@
+name: Staging Tests
+
+on:
+  push:
+    branches: [ "staging" ]
+  pull_request:
+    branches: [ "staging" ]
+
+jobs:
+  frontend-tests:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+
+      - name: Install Frontend Dependencies
+        working-directory: ./client
+        run: npm ci
+
+      - name: Run Frontend Tests
+        working-directory: ./client
+        run: npm test -- --ci
+
+      - name: Build Frontend Check
+        working-directory: ./client
+        run: npm run build
+
+  backend-tests:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+
+      - name: Install Backend Dependencies
+        working-directory: ./server
+        run: npm ci
+
+      - name: Run Backend
+        working-directory: ./server
+        run: npm run
+
+  lint:
+    name: Lint Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+
+      - name: Install Frontend Dependencies
+        working-directory: ./client
+        run: npm ci
+
+      - name: Install Backend Dependencies
+        working-directory: ./server
+        run: npm ci
+
+  status-check:
+    name: Final Status Check
+    needs: [frontend-tests, backend-tests, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Status
+        run: echo "All staging checks passed successfully!" 

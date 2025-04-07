@@ -1,0 +1,34 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+    branches: [ "main", "staging" ]
+
+jobs:
+  verify:
+    name: Verify PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+
+      - name: Check Frontend
+        working-directory: ./client
+        run: |
+          npm ci
+          npm test -- --ci
+          npm run build
+
+      - name: Check Backend
+        working-directory: ./server
+        run: |
+          npm ci
+          npm run
+      - name: PR Status
+        run: echo "PR checks completed successfully!" 

@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Header Component Testingg Header snapshot testi 1`] = `
+<header
+  class="bg-white shadow-md p-4 rounded-xl m-4 mt-10"
+>
+  <div
+    class="flex justify-between items-center"
+  >
+    <h1
+      class="text-3xl font-bold text-gray-800"
+    >
+      Tüm Notlarım
+    </h1>
+    <button
+      class="bg-blue-600 text-white px-5 py-2 rounded-full shadow-lg hover:bg-blue-700 transition duration-200"
+    >
+      + Yeni Not Ekle
+    </button>
+  </div>
+</header>
+`;
