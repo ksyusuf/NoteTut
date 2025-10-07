@@ -24,7 +24,5 @@ client/.env
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-server/.vercel
-client/.vercel
 
 mongodb_backup
