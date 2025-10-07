@@ -43,7 +43,7 @@ const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = isDevelopment 
       ? ['http://localhost:3000', 'http://127.0.0.1:3000']
-      : ['https://notetut.vercel.app'];
+      : ['https://notetut.onrender.com'];
     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
     } else {

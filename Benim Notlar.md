@@ -18,28 +18,6 @@
 - npm test -watch: testleri izleme modunda yapar, her değişiklikte sadece kaydederek testi yineler.
 
 
-# Deployment on Vercel with Github Acitons
-    ❗Workflows vercel deployment yaptığın zaman iletişim kuracak servislerin için *vercel deployment protection* ayarını kapatmalısın. aksi takdirde cors hatası alıyorsun.❗
-
-    Her servisi bağımsız olması açısından ayrı yapılandırma dosyaları ile barındırıyorum. vercel.json ile yapılandırma ayarlarını inceleyebilirsin.
-
-## Workflows Variables
-
-    Workflow içerisindeki ortam değişkenlerini 'vercel link' ile elde ediyorsun. Elde ettiğin değişkenleri
-    github -> settings -> secrets and variables -> Actions
-    kısmından eklemelisin.
-
-Bir servis için elinde olması gereken değişkenler şunlardır;
-
-* __VERCEL_TOKEN__: vercel hesap ayarlarına girip tokens kısmından üretip kaydedeceksin.
-
-* __VERCEL_PROJECT_ID__: vercel link ile edineceksin.
-
-* __VERCEL_ORG_ID__: vercel link ile edineceksin.
-
-### vercel link
-    Login olup çalışma yapacağın projeyi seçeceksin. mevcut projeni seçip ilerleyeceksin. yanlışlıkla yeni proje oluşturabilirsin. işlemler doğru yapılınca ilgili servisin olduğu dizinde .vercel->project.json oluşturacak ve onun içerisinde ilgili değişkenlerin olacak. bunlar github variables kısmına kaydedilir.
-
 ## Kurulan Workflow Yapısı
 ### Akış:
     A[Feature Branch] -->|PR| B[Staging Branch]
@@ -68,10 +46,6 @@ Mevcut proje içerisinde frontend ve backend projeleri barındırıldığı içi
 ---
     Her branch için ilgili enviromentler hazırlanmalı ve proje içerisinde bu enviromentlerden okuma yapılacak modülerlik sağlanmalı. (Bizim projemin için genel olarak oluşturulmuş vaziyette -kontrol edilmeli-)
 
-
-# Vercel Variables for Frontend/Backend Service
-
-    İlgili servisleri vercel'e yükledikten sonra environment değişkenlerini ya da global değişkenlerini vercel proje ayarlarındaki Environment Variables kısmından eklemelesin.
 
 -> Frontend için değişkenlerim:
 
