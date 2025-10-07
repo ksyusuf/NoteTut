@@ -1,7 +1,8 @@
 name: Deploy Monorepo to Render (Docker)
 
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches:
       - main
 
