@@ -56,5 +56,3 @@ Mevcut proje içerisinde frontend ve backend projeleri barındırıldığı içi
 -> Backend için değişkenlerim:
 
 * __MONGODB_URI__: MongoDB Atlas için kullanıcı adımı, şifremi ve veritabanı adımı belirttiğim ConnectionString değerim.
-
-workflows.
