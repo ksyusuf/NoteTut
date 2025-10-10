@@ -57,4 +57,4 @@ Mevcut proje içerisinde frontend ve backend projeleri barındırıldığı içi
 
 * __MONGODB_URI__: MongoDB Atlas için kullanıcı adımı, şifremi ve veritabanı adımı belirttiğim ConnectionString değerim.
 
-not: vercel bağımlılıkları var, kaldırılacak.
+workflows.
