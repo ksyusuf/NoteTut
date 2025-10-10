@@ -1,4 +1,4 @@
-name: Deploy Monorepo to Render (Docker)
+name: Deploy to Render (Docker)
 
 on:
   pull_request:
