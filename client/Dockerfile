@@ -6,8 +6,18 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 
+# environments
 ARG NODE_ENV=development
 ENV NODE_ENV=$NODE_ENV
+
+ARG REACT_APP_API_URL
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+
+# Hata kontrolü (REACT_APP_API_URL boşsa hata ver)
+RUN if [ -z "$REACT_APP_API_URL" ]; then \
+      echo "ERROR: REACT_APP_API_URL not set"; \
+      exit 1; \
+    fi
 
 # Eğer production moddaysa build al
 RUN if [ "$NODE_ENV" = "production" ]; then \
