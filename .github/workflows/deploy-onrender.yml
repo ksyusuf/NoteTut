@@ -14,18 +14,30 @@ jobs:
     name: Deploy Server
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Trigger Render Deployment
+      - name: Check if server changed
+        id: check_server
+        run: |
+          git fetch origin main
+          CHANGED=$(git diff --name-only origin/main...HEAD | grep '^server/')
+          if [ -z "$CHANGED" ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy Server
+        if: steps.check_server.outputs.skip == 'false'
         id: deploy_server
         run: |
           RESPONSE=$(curl -s -X POST ${{ secrets.RENDER_SERVICE_ID_SERVER }})
           echo "response=$RESPONSE" >> $GITHUB_OUTPUT
-
-      - name: Wait for Deploy to Finish
+                          
+      - name: Wait for Server Deploy to Finish
+        if: steps.check_server.outputs.skip == 'false'
         run: |
-          DEPLOY_ID=$(echo "${{ steps.deploy_server.outputs.response }}" | jq -r '.deploy.id')
+          DEPLOY_ID=$(echo '${{ steps.deploy_server.outputs.response }}' | jq -r '.deploy.id')
           STATUS=""
           until [ "$STATUS" = "success" ] || [ "$STATUS" = "failed" ]; do
             sleep 10
@@ -42,18 +54,30 @@ jobs:
     name: Deploy Client
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Trigger Render Deployment
+      - name: Check if client changed
+        id: check_client
+        run: |
+          git fetch origin main
+          CHANGED=$(git diff --name-only origin/main...HEAD | grep '^client/')
+          if [ -z "$CHANGED" ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy Client
+        if: steps.check_client.outputs.skip == 'false'
         id: deploy_client
         run: |
           RESPONSE=$(curl -s -X POST ${{ secrets.RENDER_SERVICE_ID_CLIENT }})
           echo "response=$RESPONSE" >> $GITHUB_OUTPUT
 
-      - name: Wait for Deploy to Finish
+      - name: Wait for Client Deploy to Finish
+        if: steps.check_client.outputs.skip == 'false'
         run: |
-          DEPLOY_ID=$(echo "${{ steps.deploy_client.outputs.response }}" | jq -r '.deploy.id')
+          DEPLOY_ID=$(echo '${{ steps.deploy_client.outputs.response }}' | jq -r '.deploy.id')
           STATUS=""
           until [ "$STATUS" = "success" ] || [ "$STATUS" = "failed" ]; do
             sleep 10
