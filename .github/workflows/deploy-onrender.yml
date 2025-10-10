@@ -11,24 +11,57 @@ env:
 
 jobs:
   deploy-server:
-    name: Build & Deploy Server
+    name: Deploy Server
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Trigger Render Deployment
+        id: deploy_server
         run: |
-          curl -X POST ${{ secrets.RENDER_SERVICE_ID_SERVER }}
+          RESPONSE=$(curl -s -X POST ${{ secrets.RENDER_SERVICE_ID_SERVER }})
+          echo "response=$RESPONSE" >> $GITHUB_OUTPUT
+
+      - name: Wait for Deploy to Finish
+        run: |
+          DEPLOY_ID=$(echo "${{ steps.deploy_server.outputs.response }}" | jq -r '.deploy.id')
+          STATUS=""
+          until [ "$STATUS" = "success" ] || [ "$STATUS" = "failed" ]; do
+            sleep 10
+            STATUS=$(curl -s -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+              https://api.render.com/deploy/$DEPLOY_ID | jq -r '.deploy.status')
+            echo "Current status: $STATUS"
+          done
+          if [ "$STATUS" != "success" ]; then
+            echo "Server deploy failed!"
+            exit 1
+          fi
 
   deploy-client:
-    name: Build & Deploy Client
+    name: Deploy Client
     runs-on: ubuntu-latest
-    needs: deploy-server
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Trigger Render Deployment
+        id: deploy_client
         run: |
-          curl -X POST ${{ secrets.RENDER_SERVICE_ID_CLIENT }}
+          RESPONSE=$(curl -s -X POST ${{ secrets.RENDER_SERVICE_ID_CLIENT }})
+          echo "response=$RESPONSE" >> $GITHUB_OUTPUT
+
+      - name: Wait for Deploy to Finish
+        run: |
+          DEPLOY_ID=$(echo "${{ steps.deploy_client.outputs.response }}" | jq -r '.deploy.id')
+          STATUS=""
+          until [ "$STATUS" = "success" ] || [ "$STATUS" = "failed" ]; do
+            sleep 10
+            STATUS=$(curl -s -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+              https://api.render.com/deploy/$DEPLOY_ID | jq -r '.deploy.status')
+            echo "Current status: $STATUS"
+          done
+          if [ "$STATUS" != "success" ]; then
+            echo "Client deploy failed!"
+            exit 1
+          fi
